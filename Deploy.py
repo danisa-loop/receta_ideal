@@ -32,6 +32,9 @@ op1_l = option1.lower()
 op2_l = option2.lower()
 op3_l = option3.lower()
 
+st.caption("Buscando...")
+st.empty()
+
 def normalize(s):
     replacements = (
         ("á", "a"),
@@ -83,8 +86,9 @@ lista_ingredientes = [nor1,nor2,nor3]
 busqueda = searchByIngredient(data,lista_ingredientes)
 
 #imprimimos las recetas que salieron: nombre, ingredientes e instrucciones
+st.markdown("**Receta(s) encontrada(s): **")
 
-st.write(data[busqueda].loc[:,"Nombre"], data[busqueda].loc[:,"Ingredientes"], data[busqueda].loc[:,"Instrucciones"])
+st.table(data[busqueda].iloc[:,2:5]) 
 
 #wordcloud para darle diseño
 st.image('./png1.png')
