@@ -4,14 +4,14 @@ import numpy as np
 
 st.title("¿Qué comemos?")
 
-t = st.markdown("Ingresá los ingredientes que tengas a mano, si sos cociner@ estrella o estrellad@, y nosotr@s te damos la receta* ideal para vos!! :sunglasses:")
+t1 = st.markdown("Ingresá los ingredientes que tengas a mano, si sos cociner@ estrella o estrellad@, y nosotr@s te damos la receta* ideal para vos!! :sunglasses:")
 t2 = st.caption("*Recetas extraídas de https://cocinerosargentinos.com/, con etiquetas de dificultad predichas por un modelo de machine learning entrenado por nuestro equipo de trabajo.")
 
 #ingredientes con los que entrenamos el modelo
-INGREDIENTES = ["naranja","verdeo","crema","azucar impalpable","batata","manzana","bondiola","durazno","berenjena","pechuga","oliva","harina", "leche", "azucar", "queso", "tomate", "huevo", "crema", "nuez", "arroz", "chocolate", "carne", "pollo","jengibre", "miel", "levadura", "papa", "almendra", "jamon", "calabaza", "atun", "aceitunas", "arveja", "garbanzos", "espinaca", "acelga", "quinoa", "frutilla", "avellana", "apio", "puerro", "limon", "chorizo", "avena", "salmon", "mani", "brocoli", "cerveza", "mozzarella", "ricota", "esparragos", "quinoa", "azafran", "panceta", "tofu"] 
+INGREDIENTES = ["","naranja","verdeo","crema","azucar impalpable","batata","manzana","bondiola","durazno","berenjena","pechuga","oliva","harina", "leche", "azucar", "queso", "tomate", "huevo", "crema", "nuez", "arroz", "chocolate", "carne", "pollo","jengibre", "miel", "levadura", "papa", "almendra", "jamon", "calabaza", "aceitunas", "arveja", "garbanzos", "espinaca", "acelga", "quinoa", "frutilla", "avellana", "apio", "puerro", "limon", "chorizo", "avena", "salmon", "mani", "brocoli", "cerveza", "mozzarella", "ricota", "esparragos", "quinoa", "azafran", "panceta", "tofu"] 
 
 #mismos ingredientes, pero con mayúsculas y tildes para la lista desplegable
-ingred_choice = ('Aceitunas', 'Acelga', 'Almendra', 'Apio', 'Arroz', 'Arveja', 'Atún', 'Avellana', 'Avena', 'Azafrán', 'Azúcar', 'Azúcar impalpable', 'Batata', 'Berenjena', 'Bondiola', 'Brócoli', 'Calabaza', 'Carne', 'Cerveza', 'Chocolate', 'Chorizo', 'Crema', 'Durazno', 'Espinaca', 'Espárragos', 'Fideo', 'Frutilla', 'Garbanzos', 'Harina', 'Huevo', 'Jamón', 'Jengibre', 'Leche', 'Levadura', 'Limón', 'Manzana', 'Maní', 'Miel', 'Mozzarella', 'Naranja', 'Nuez', 'Oliva', 'Panceta', 'Papa', 'Pechuga', 'Pollo', 'Puerro', 'Queso', 'Quinoa', 'Ricota', 'Salmón', 'Tofu', 'Tomate', 'Verdeo')
+ingred_choice = ("",'Aceitunas', 'Acelga', 'Almendra', 'Apio', 'Arroz', 'Arveja', 'Avellana', 'Avena', 'Azafrán', 'Azúcar', 'Azúcar impalpable', 'Batata', 'Berenjena', 'Bondiola', 'Brócoli', 'Calabaza', 'Carne', 'Cerveza', 'Chocolate', 'Chorizo', 'Crema', 'Durazno', 'Espinaca', 'Espárragos', 'Fideo', 'Frutilla', 'Garbanzos', 'Harina', 'Huevo', 'Jamón', 'Jengibre', 'Leche', 'Levadura', 'Limón', 'Manzana', 'Maní', 'Miel', 'Mozzarella', 'Naranja', 'Nuez', 'Oliva', 'Panceta', 'Papa', 'Pechuga', 'Pollo', 'Puerro', 'Queso', 'Quinoa', 'Ricota', 'Salmón', 'Tofu', 'Tomate', 'Verdeo')
 
 #selección de ingredientes
 option1 = st.selectbox("Ingrediente 1", ingred_choice)
@@ -19,13 +19,8 @@ option2 = st.selectbox("Ingrediente 2", ingred_choice)
 option3 = st.selectbox("Ingrediente 3", ingred_choice)
 
 #selección de dificultad
-grade_map = {
-    0: '"Con suerte te hago un huevo frito."',
-    1: '"Tengo más estrellas Michelin que Martitegui."',
-}
-
-grade = st.slider('Dificultad', 0, 1, 1)
-st.write("Dificultad elegida: ", grade_map[grade])
+dif_levels = ["Con suerte te hago un huevo frito", "Tengo más estrellas Michelin que Martitegui"]
+dif = st.radio("Dificultad", dif_levels)
 
 #reconvertidos datos seleccionados a palabras existentes en la lista de INGREDIENTES con la que buscamos en el df de ca
 op1_l = option1.lower()
@@ -55,7 +50,6 @@ nor3 = normalize(op3_l)
 df_cad = pd.read_csv('recetas_cocineros_argentinos_dif.csv',sep='|')
 
 #armamos la máscara de los ingredientes seleccionados para que devuelva una receta
-
 rango = df_cad.index
 diccionario = {}
 for indice in rango:
@@ -88,7 +82,17 @@ busqueda = searchByIngredient(data,lista_ingredientes)
 #imprimimos las recetas que salieron: nombre, ingredientes e instrucciones
 st.markdown("**Receta(s) encontrada(s): **")
 
-st.table(data[busqueda].iloc[:,2:5]) 
+#agregamos máscara de dificultad
+if dif == "Con suerte te hago un huevo frito":
+    mask0 = data["Dificultad"]==0
+    mask_posta0 = (busqueda & mask0) 
+    st.table(data[mask_posta0].iloc[:,2:5])
+else:
+    mask1 = data["Dificultad"]==1
+    mask_posta1 = busqueda & mask1
+    st.table(data[mask_posta1].iloc[:,2:5])   
 
 #wordcloud para darle diseño
 st.image('./png1.png')
+
+t3 = st.caption("*By Lucas, Dani, Sole, Agus y Augus")
