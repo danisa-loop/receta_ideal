@@ -20,7 +20,7 @@ option3 = st.selectbox("Ingrediente 3", ingred_choice)
 
 #selección de dificultad
 dif_levels = ["Con suerte te hago un huevo frito", "Tengo más estrellas Michelin que Martitegui"]
-dif = st.radio("Dificultad", dif_levels)
+dif = st.radio("Cocino nivel:", dif_levels)
 
 #reconvertidos datos seleccionados a palabras existentes en la lista de INGREDIENTES con la que buscamos en el df de ca
 op1_l = option1.lower()
